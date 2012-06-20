@@ -14,7 +14,7 @@
 function build_runtime() {
 	// 加载常量定义文件
 	require DEVE_PATH.'/Config/Const.php';
-	
+
 	// 定义核心编译的文件
 	$runtime[]  =  DEVE_PATH.'/Core/Functions.php'; // 系统函数
 	if(version_compare(PHP_VERSION,'5.2.0','<') )
@@ -22,27 +22,23 @@ function build_runtime() {
 		$runtime[]	=	 DEVE_PATH.'/Core/Compat.php';
 	// 核心基类必须加载
 	$runtime[]  =  DEVE_PATH.'/Core/Deve.class.php';
-	// 读取核心编译文件列表
+	// 读取项目核心编译文件列表
 	if(is_file(CONFIG_PATH.'/Core.php'))
 		// 加载项目自定义的核心编译文件列表
-		include CONFIG_PATH.'/Core.php';
-	
-	// 默认核心
-	$list = include DEVE_PATH.'/Config/Core.php';
-	
+		$list = include CONFIG_PATH.'/Core.php';
+    else
+	    // 默认核心
+	    $list = include DEVE_PATH.'/Config/Core.php';
+
 	$runtime = array_merge($runtime,$list);
 	// 加载核心编译文件列表
 	foreach ($runtime as $key=>$file){
 		if(is_file($file))  require $file;
 	}
 	
-	// 检查项目是否是第一次创建，是的话走创建流程
-	if(!defined('APP_BUILD_TIME')) {
-		build_app_dir();        
-	}
-
-	// 开发模式下不编译框架文件
-	if(defined('APP_BUILD_TIME') && (!defined('IS_DEBUG') || IS_DEBUG == false)) {
+	// 生成运行模式缓存
+	if(!defined('IS_DEBUG') || IS_DEBUG == false) {
+		check_app_dirs();   // 先校验目录的完整性	
 		$compile = false;
 		$content = compile(DEVE_PATH.'/Config/Const.php',$compile);
 		foreach ($runtime as $file){
@@ -59,15 +55,14 @@ function build_runtime() {
 
 // 批量创建目录
 function mkdirs($dirs,$mode=0777) {
-	foreach ($dirs as $dir){
-		if(!is_dir($dir))  mkdir($dir,$mode);
-	}
+    foreach ($dirs as $dir){
+        is_dir($dir) or mkdir($dir,$mode);
+    }
 }
 
-// 创建项目目录结构
-function build_app_dir() {
-	// 没有创建项目目录的话自动创建
-	if(!is_dir(APP_PATH)) mk_dir(APP_PATH,0777);
+function check_app_dirs() {
+// 没有创建项目目录的话自动创建
+	is_dir(APP_PATH) or mk_dir(APP_PATH,0777);
 	if(is_writeable(APP_PATH)) {
 		$dirs  = array(
 			CONFIG_PATH,
@@ -100,8 +95,6 @@ function build_app_dir() {
 					file_put_contents($dir.$filename,$content);
 			}
 		}
-		// 写入核心文件
-        file_put_contents(CONFIG_PATH.'/Core.php',"<?php\ndefine('APP_BUILD_TIME',".time().");// 项目创建时间\n?>");
                 
 		// 写入配置文件
 		if(!is_file(CONFIG_PATH.'/Config.php'))
@@ -125,5 +118,4 @@ function build_app_dir() {
 	    exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~</div>');
     }
 }
-
 ?>
