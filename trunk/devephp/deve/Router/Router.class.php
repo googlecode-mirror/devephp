@@ -48,15 +48,16 @@ class Router extends Deve
      * @return void
      +----------------------------------------------------------
      */
-	private static function parseRequest()
+	private static function request()
 	{
-		$RQ = null;
+		static $RQ = null;
+		if($RQ !== null) return $RQ;
 		if(isset($_SERVER['CONTENT_TYPE'])&& $_SERVER['CONTENT_TYPE']=='application/x-amf')
 		{
-			$RQ = Router::getRequest('AmfTranslate');            // PHP的AMF代理
+			$RQ = Router::parse('AmfTranslate');            // PHP的AMF代理
 		}elseif(isset($_SERVER['HTTP_USER_AGENT'])&& substr($_SERVER['HTTP_USER_AGENT'],0,6)=='PHPRPC')
 		{
-			$RQ = Router::getRequest('RpcDataParse');            // JAVA的PHPRPC代理
+			$RQ = Router::parse('RpcDataParse');            // JAVA的PHPRPC代理
 		}else{
 			define('T_HTML',true);                               // HTML求情
 		}
@@ -71,7 +72,9 @@ class Router extends Deve
 				$_POST[C('VAR_ACTION')] = $RQ->ActionName;
 			$Data = $RQ->getParam();
 			$_POST= array_merge($_POST,$Data);
+			return $RQ;
 		}
+		return;
 	}
 
     /**
@@ -83,10 +86,10 @@ class Router extends Deve
      * @return void
      +----------------------------------------------------------
      */
-	private static function getRequest($DPN){
+	private static function parse($DPN){
 		static $DataParse=array();
 		if(!$DPN)return null;
-		if(isset($DataParse[$DPN]))return $DataParse;
+		if(isset($DataParse[$DPN]))return $DataParse[$DPN];
 
 		if(!class_exists($DPN)){
 			if(strtolower(substr($DPN,0,3))=='_dp'){
