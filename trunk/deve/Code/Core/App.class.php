@@ -43,7 +43,7 @@ class App
 			(!is_file(CONFIG_PATH.'/Config.php') || filemtime(APP_PATH.'/~app.php')>filemtime(CONFIG_PATH.'/Config.php')))
 		{
 			// 直接读取编译后的项目文件
-			//	C(include APP_PATH.'/~app.php');
+			include APP_PATH.'/~app.php';
 		}else{
 			// 预编译项目
 			App::build();
@@ -54,16 +54,16 @@ class App
 
 		// 设置系统时区 PHP5支持
 		if(function_exists('date_default_timezone_set'))
-			date_default_timezone_set(S('APP_TIMEZONE'));
+			date_default_timezone_set(S('APP_DEFAULT_TIMEZONE'));
 
 		// 允许注册AUTOLOAD方法
-		if(S('APP_AUTOLOAD_REG') && function_exists('spl_autoload_register'))
+		if(S('APP_AUTOLOAD_ON') && function_exists('spl_autoload_register'))
 			spl_autoload_register(array('Deve', 'autoload'));
 
-		if(S('SESSION_AUTO_START'))  session_start(); // Session初始化
+		if(S('APP_SESSION_ON'))session_start(); // Session初始化
 
 		// URL路由器
-		Router::request();
+		if(S('APP_ROUTER_ON'))Router::request();
 
 		// 当前文件
 		if(!defined('PHP_FILE'))
@@ -81,7 +81,7 @@ class App
 		App::checkLanguage();         // 语言检查
 		App::checkTemplate();         // 模板检查
 		// 开启静态缓存
-		if(S('HTML_CACHE_ON')){        
+		if(S('APP_HTMLCACHE_ON')){        
 			HtmlCache::readHTMLCache();
 		}
 		// 项目初始化标签
@@ -110,9 +110,8 @@ class App
 				$common .= compile(LIB_PATH.'/Common.php',false);
 		}
 		// 加载项目编译文件列表
-		if(is_file(CONFIG_PATH.'/Include.php')) {
-			$list   =  include CONFIG_PATH.'/Include.php';
-			foreach ($list as $file){
+		if(is_array(S('APP_COMMON_FILES'))) {
+			foreach (S('APP_COMMON_FILES') as $file){
 				// 加载并编译文件
 				require $file;
 				if($runtime) $common .= compile($file,false);
@@ -203,7 +202,7 @@ class App
 		$module = !empty($_POST[$var]) ?
 			$_POST[$var] :
 			(!empty($_GET[$var])? $_GET[$var]:S('APP_DEFAULT_MODULE'));
-		if(S('URL_CASE_INSENSITIVE')) {
+		if(S('APP_URL_CASE_INSENSITIVE')) {
 			// URL地址不区分大小写
 			define('P_MODULE_NAME',strtolower($module));
 			// 智能识别方式 index.php/user_type/index/ 识别到 UserTypeAction 模块
@@ -263,17 +262,17 @@ class App
      */
 	static private function checkLanguage()
 	{
-		$langSet = S('LANG_DEFAULT');
+		$langSet = S('APP_LANG_DEFAULT');
 		// 不开启语言包功能，仅仅加载框架语言文件直接返回
-		if (!S('LANG_SWITCH_ON')){
+		if (!S('APP_LANG_ON')){
 			L(include DEVE_PATH.'/Config/'.$langSet.'.php');
 			return;
 		}
 		// 启用了语言包功能
 		// 根据是否启用自动侦测设置获取语言选择
 		if (S('LANG_AUTO_DETECT')){
-			if(isset($_GET[S('APP_VAR_LANGUAGE')])){// 检测浏览器支持语言
-				$langSet = $_GET[S('APP_VAR_LANGUAGE')];// url中设置了语言变量
+			if(isset($_GET[S('LANG_VAR')])){// 检测浏览器支持语言
+				$langSet = $_GET[S('LANG_VAR')];// url中设置了语言变量
 				cookie('deve_lang',$langSet,3600);
 			}elseif(cookie('deve_lang'))// 获取上次用户的选择
 				$langSet = cookie('deve_lang');
