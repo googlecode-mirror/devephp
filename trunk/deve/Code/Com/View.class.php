@@ -195,7 +195,7 @@ class View extends Deve
 			// 调用模板引擎解析和输出
 			// exit($className);
 			$className   = 'Template'.ucwords($engine);
-			require_cache(DEVE_PATH.'/Code/Com/Engine/'.$className.'.class.php');
+			require_cache(DEVE_PATH.'/Code/Com/Template/'.$className.'.class.php');
 			$tpl   =  new $className;
 			$tpl->fetch($templateFile,$this->tVar,$charset);
 		}

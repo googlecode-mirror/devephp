@@ -14,8 +14,8 @@ return array(
 	'TMPL_CACHE_TIME'		=>	-1,         // 模板缓存有效期 -1 为永久，(以数字为值，单位:秒)
 	'TMPL_ACTION_ERROR'     => 'Public.success', // 默认错误跳转对应的模板文件
 	'TMPL_ACTION_SUCCESS'   => 'Public.success', // 默认成功跳转对应的模板文件
-	'TMPL_TRACE_FILE'       => VIEW_PATH.'/PageTrace.tpl.php',     // 页面Trace的模板文件
-	'TMPL_EXCEPTION_FILE'   => VIEW_PATH.'/DeveException.tpl.php',// 异常页面的模板文件
+	'TMPL_TRACE_FILE'       => DEVE_PATH.'/Code/Com/View/PageTrace.tpl.php',     // 页面Trace的模板文件
+	'TMPL_EXCEPTION_FILE'   => DEVE_PATH.'/Code/Com/View/DeveException.tpl.php',// 异常页面的模板文件
 	'TMPL_FILE_DEPR'=>'/', //模板文件MODULE_NAME与ACTION_NAME之间的分割符，只对项目分组部署有效
 	'TMPL_DEFAULT_THEME' => 'default',
 	'TMPL_CHARSET' => 'utf-8',

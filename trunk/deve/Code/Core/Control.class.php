@@ -22,22 +22,11 @@
  */
 abstract class Control extends Deve
 {//类定义开始
-    
-    protected $dp = null;
+
     // 视图实例对象
-    protected $view = null;
-    // 数据输出
-    protected $response = null;
-    // 缓存技术
-    protected $cache = null;
-    // 用户信息
-    protected $userInfo = array();
-    
-    protected $targetURI = '';
-    // ActiveVO
-    private $activeVO = array();
-    // 输出数据
-    private $outData = array();
+    protected $view   =  null;
+    // 当前Action名称
+    private $name =  '';
 
    /**
      +----------------------------------------------------------
@@ -46,24 +35,10 @@ abstract class Control extends Deve
      * @access public
      +----------------------------------------------------------
      */
-    public final function __construct()
+    public function __construct()
     {
-        // 用户认证
-        if(MODULE_NAME !== 'Admin'){
-            $this->userInfo = R('User','Auth','check');   // 用户认证       
-        }else{
-        	$this->userInfo = R('Admin','Auth','check');  // 管理员认证
-        }
-        // 验证是否有操作权限
-        if($this->userInfo['isAuth']==false && REV_AUTH == true){
-        	$this->redirect(S('SERVER_LOGIN_URL'));
-        }
         // 实例化视图类
-        if(null === $this->dp = Router::request()){
-        	$this->view = Deve::instance('View'); 
-        }
-        // 实例化缓存类
-        $this->cache      = Cache::getInstance(S('APP_CACHE_TYPE'));
+        $this->view       = Deve::instance('View');
 	    // 控制器初始化
         if(method_exists($this,'_initialize'))
             $this->_initialize();
@@ -119,6 +94,11 @@ abstract class Control extends Deve
      +----------------------------------------------------------
      */
     protected function display($templateFile='',$charset='',$contentType='text/html')
+    {
+		$this->view->display($templateFile,$charset,$contentType);
+    }
+    
+    protected function output($templateFile='',$charset='',$contentType='text/html')
     {
 		$this->view->display($templateFile,$charset,$contentType);
     }
@@ -214,12 +194,8 @@ abstract class Control extends Deve
      */
     protected function trace($name,$value='')
     {
-        if($this->dp){
-        	$this->dp->debug(array($name,$value));
-        }else{
-        	$this->view->trace($name,$value);
-        }    
-     }
+        $this->view->trace($name,$value);
+    }
 
     /**
      +----------------------------------------------------------
@@ -280,14 +256,9 @@ abstract class Control extends Deve
      * @return void
      +----------------------------------------------------------
      */
-    protected function error($message,$langArr=array(),$ajax=false)
+    protected function error($message,$ajax=false)
     {
-        $langArr && $message = L($message,$langArr);	
-    	if($this->dp){
-        	$this->msg($message,MESSAGE_FAILED);
-        }else{
-    	    $this->_dispatch_jump($message,1,$ajax);
-        }
+        $this->_dispatch_jump($message,0,$ajax);
     }
 
     /**
@@ -302,14 +273,9 @@ abstract class Control extends Deve
      * @return void
      +----------------------------------------------------------
      */
-    protected function success($message,$langArr=array(),$ajax=false)
+    protected function success($message,$ajax=false)
     {
-        $langArr && $message = L($message,$langArr);	
-    	if($this->dp){
-        	$this->msg($message,MESSAGE_SUCCESS);
-        }else{
-    	    $this->_dispatch_jump($message,1,$ajax);
-        }
+        $this->_dispatch_jump($message,1,$ajax);
     }
 
     /**
@@ -367,14 +333,9 @@ abstract class Control extends Deve
      +----------------------------------------------------------
      */
     protected function redirect($url,$params=array(),$delay=0,$msg='') {
-    	if(S('LOG_RECORD')) Log::save();
-    	if($this->dp){
-			$this->dp->redirect($url,$params);
-			$this->onEnd();
-		}else{
-		    redirect($url,$delay,$msg);
-		}
-	}
+        if(S('LOG_RECORD')) Log::save();
+		redirect($url,$delay,$msg);
+    }
 
     /**
      +----------------------------------------------------------
@@ -420,83 +381,6 @@ abstract class Control extends Deve
         // 中止执行  避免出错后继续执行
         exit ;
     }
-    
-    ################################################################################
-                       #        数据解析器
-    ################################################################################
-    
-    
-    protected function output($params=array(),$activeVO=array())
-    {
-		if($this->dp === null){ 
-		    print_r($params);
-        }
-    	if(empty($this->outData)){
-			$this->outData = $params;
-		}elseif(is_object($this->outData)){
-			foreach ((array)$params as $k=>$v){
-				$this->outData->$k = $v;
-			}
-		}else{
-			foreach ((array)$params as $k=>$v){
-				$this->outData[$k] = $v;
-			}
-		};
-		$this->onEnd();
-    }
-    
-    protected function setActiveVO($key,$value,$VO='IndexVO'){
-		if(!isset($this->activeVO[$VO])){
-			$this->activeVO[$VO]=array();
-		}
-		$this->activeVO[$VO][$key]=$value;
-	}
-	
-    protected function msg($message='',$msgno=MESSAGE_FAILED,$backurl='',$backparams=array()){
-		if(S('APP_DEBUG')){
-			$this->trace('load_time',number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3));
-			$this->trace('init_time',number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3));
-			$this->trace('exec_time',number_format(($startTime  -$GLOBALS['_initTime'] ), 3));
-			$this->trace('parse_time',number_format(($endTime - $startTime), 3));
-		}
-		if($this->dp){
-			$activeVO=array();
-			foreach ($this->activeVO as $k=>$vo){
-				if(is_array($vo)){
-					$activeVO[] = arrayToVO($vo,$k);
-				}else{
-					$activeVO[] = $vo;
-				}
-			}
-			$this->dp->msg($msgno,$message,$backurl,$this->outData,$activeVO,$backparams);
-		}
-		exit;
-    }
-
-    protected function onEnd(){
-        if(S('APP_DEBUG')){
-			$this->trace('load_time',number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3));
-			$this->trace('init_time',number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3));
-			$this->trace('exec_time',number_format(($startTime  -$GLOBALS['_initTime'] ), 3));
-			$this->trace('parse_time',number_format(($endTime - $startTime), 3));
-        }
-        
-		if($this->dp){
-			$activeVO=array();
-			foreach ($this->activeVO as $k=>$vo){
-				if(is_array($vo)){
-					$activeVO[] = arrayToVO($vo,$k);
-				}else{
-					$activeVO[] = $vo;
-				}
-			}
-			$this->dp->out($this->outData,$activeVO);
-		}
-    }
-        
-   function __destruct(){
-   //	   $this->onEnd();
-   } 
 
 }//类定义结束
 ?>
