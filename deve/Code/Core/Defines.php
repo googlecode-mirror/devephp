@@ -11,7 +11,7 @@
 
 if (!defined('DEVE_PATH')) exit();
 //  版本信息
-define('DEVE_VERSION', '0.0.1');
+define('DEVE_VERSION', '1.1.0');
 //  系统信息
 if(version_compare(PHP_VERSION,'6.0.0','<') ) {
     @set_magic_quotes_runtime (0);
@@ -28,9 +28,9 @@ if(!IS_CLI) {
         if(IS_CGI) {
             //CGI/FASTCGI模式下
             $_temp  = explode('.php',$_SERVER["PHP_SELF"]);
-            define('_PHP_FILE_',  rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
+            define('_PHP_FILE_' , rtrim(str_replace($_SERVER["HTTP_HOST"],'',$_temp[0].'.php'),'/'));
         }else {
-            define('_PHP_FILE_',    rtrim($_SERVER["SCRIPT_NAME"],'/'));
+            define('_PHP_FILE_' , rtrim($_SERVER["SCRIPT_NAME"],'/'));
         }
     }
     // 网站URL根目录
@@ -49,7 +49,6 @@ if(!IS_CLI) {
 if(MEMORY_LIMIT_ON) {
      $GLOBALS['_startUseMems'] = memory_get_usage();
 }
-
 
 // 目录设置
 define('CONFIG_DIR' , 'Config');

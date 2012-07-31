@@ -1,5 +1,5 @@
 <?php
-define('DBO_PATH',MODEL_PATH.'/DBO');
+//define('DBO_PATH',MODEL_PATH.'/DBO');
 
 /**
  +----------------------------------------------------------
