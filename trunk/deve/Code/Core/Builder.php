@@ -35,8 +35,7 @@ function build_runtime() {
 		if(is_file($file))  require $file;
 	}
 	// 生成运行模式缓存
-	if(IS_DEBUG == false) {
-		check_app_dirs();   // 先校验目录的完整性	
+	if(IS_DEBUG == false && true===check_app_dirs()) {	
 		$compile = false;
 		$content = compile(DEVE_PATH.'/Code/Core/Defines.php',$compile);
 		foreach ($runtime as $file){
@@ -109,10 +108,11 @@ function check_app_dirs() {
 	      }
     }
 ?>';
-	         file_put_contents(CONTROLLER_PATH.'/Index/IndexAction.class.php',$content);
-	   }
+	       file_put_contents(CONTROLLER_PATH.'/Index/IndexAction.class.php',$content);
+	    }
+	    return true;
     }else{
-	    header("Content-Type:text/html; charset=utf-8");
+        header("Content-Type:text/html; charset=utf-8");
 	    exit('<div style=\'font-weight:bold;float:left;width:345px;text-align:center;border:1px solid silver;background:#E8EFFF;padding:8px;color:red;font-size:14px;font-family:Tahoma\'>项目目录不可写，目录无法自动生成！<BR>请使用项目生成器或者手动生成项目目录~</div>');
     }
 }

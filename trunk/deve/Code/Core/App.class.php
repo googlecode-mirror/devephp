@@ -40,7 +40,7 @@ class App
 
 		// 检查项目是否编译过
 		if(is_file(APP_PATH.'/~app.php') && 
-			(!is_file(CONFIG_PATH.'/Config.php') || filemtime(APP_PATH.'/~app.php')>filemtime(CONFIG_PATH.'/Config.php')))
+			(!is_file(CONFIG_PATH.'/App.php') || filemtime(APP_PATH.'/~app.php')>filemtime(CONFIG_PATH.'/App.php')))
 		{
 			// 直接读取编译后的项目文件
 			include APP_PATH.'/~app.php';
