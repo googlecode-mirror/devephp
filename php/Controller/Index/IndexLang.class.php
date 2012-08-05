@@ -2,9 +2,22 @@
 class IndexLang extends Control{
 
     function main(){
-	    echo "<p>".L('{Lang.IndexLang.title}',array('DevePHP','1.1.0'))."</p>";
-        echo "<p>".L('{Lang.IndexLang.content}')."</p>";
-        echo "<p>".L('{Lang.IndexLang.time}',array(date('Y-m-d H:i:s',time())))."</p>";
+	    $title = L('{Lang.IndexLang.title}',array('DevePHP','1.1.0'));
+        $time = L('{Lang.IndexLang.time}',array(date(L('{Lang.IndexLang.dateformat}'))));
+        
+		$this->assign('title',$title);
+		$this->assign('content',$content);
+		$this->assign('time',$time);
+		$this->display();
+	}
+
+	function cross($a,$b){
+	    $title = L('{Lang.IndexLang.title}',array('DevePHP','1.1.0'));
+        $time = L('{Lang.IndexLang.time}',array(date(L('{Lang.IndexLang.dateformat}'))));
+        echo $a,$b;
+		echo $title."<br />";
+		echo $content."<br />";
+		echo $time."<br />";
 	}
 
 }
