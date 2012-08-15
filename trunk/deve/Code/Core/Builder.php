@@ -36,10 +36,10 @@ function build_runtime() {
 	}
 	// 生成运行模式缓存
 	if(IS_DEBUG == false && true===check_app_dirs()) {	
-		$compile = false;
-		$content = compile(DEVE_PATH.'/Code/Core/Defines.php',$compile);
+		
+		$content = compile(DEVE_PATH.'/Code/Core/Defines.php',false);
 		foreach ($runtime as $file){
-			$content .= compile($file,$compile);
+			$content .= compile($file,false);
 		}
 		if(defined('STRIP_RUNTIME_SPACE') && STRIP_RUNTIME_SPACE == false ) {
 			file_put_contents(APP_PATH.'/~runtime.php','<?php'.$content);

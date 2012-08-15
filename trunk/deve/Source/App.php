@@ -21,10 +21,10 @@ return array(
 	'APP_DEFAULT_ACTION'        => 'main',
 	'APP_MCA_ON'                => false,	// 是否开启MCA认证
 
-	'APP_LANG_DEFAULT'          => 'zh-cn',
-	'APP_LANG_ON'               => true,
-	'APP_LANG_AUTO'				=> true,
-	'APP_VAR_LANG'              => 'l',	    // 默认语言切换变量
+	'APP_LANG_DEFAULT'       => 'zh-cn',
+	'APP_LANG_ON'            => true,
+	'APP_LANG_AUTO'			 => true,
+	'APP_VAR_LANG'           => 'l',	    // 默认语言切换变量
 	
 	'APP_COOKIE_EXPIRE'         => 3600,    // Coodie有效期
 	'APP_COOKIE_DOMAIN'         => '',      // Cookie有效域名
@@ -61,7 +61,7 @@ return array(
 	'APP_VAR_PATHINFO'          => 's',  	// PATHINFO 兼容模式获取变量例如 ?s=/module/action/id/1 后面的参数取决于URL_PATHINFO_MODEL 和 URL_PATHINFO_DEPR
 	'APP_PAGE_TRACE '           => true,
 	'APP_HTML_CACHE_ON'         => false,	// 是否开启htmlcache
-	'APP_TMPL_TRACE_FILE'            => DEVE_PATH.'/Code/Com/View/PageTrace.tpl.php',     // 页面Trace的模板文件',
+	'APP_TMPL_TRACE_FILE'  => DEVE_PATH.'/Code/Com/View/PageTrace.tpl.php',     // 页面Trace的模板文件',
 	
 	'APP_TMPL_ACTION_ERROR'     => 'Public.success', // 默认错误跳转对应的模板文件
 	'APP_TMPL_ACTION_SUCCESS'   => 'Public.success', // 默认成功跳转对应的模板文件

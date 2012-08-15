@@ -645,31 +645,33 @@ function S($name=null,$value=null)
 	static $_config = array();
 	// 无参数时获取所有
 	if(empty($name)) return $_config;
-	$name = strtolower($name);
-	if (is_null($value)){
-		if(isset($_config[$name])){
-			return $_config[$name];
-		}else{
-			if(false !== strpos($name,'_') && $tag = explode('_',$name)){						
-				if(EACS && !is_null(eaccelerator_get($name))){
-					$_config = array_merge($_config,eaccelerator_get($tag[0]));
-					return $_config[$name];
-				}	
-				$file = ucwords($tag[0]);        // Source文件名
-				// c0框架配置文件   c1 APP配置文件
-				$c0 = file_exists(DEVE_PATH."/Source/{$file}.php")?include(DEVE_PATH."/Source/{$file}.php"):array();
-				$c1 = file_exists(CONFIG_PATH."/{$file}.php")?include(CONFIG_PATH."/{$file}.php"):null;								
-				$config = is_array($c1) ? array_change_key_case(array_merge($c0,$c1)) : array_change_key_case($c0);
-				// 整合所有的配置文件
-				$_config = array_merge($_config,$config);
-				EACS && eaccelerator_put($tag[0],$config,600);
-				// 返回配置
-				return isset($_config[$name])?$_config[$name]:null;
-			}
-			return null;
+	
+	if(is_string($name) && ($name = strtolower($name))){
+		if(!is_null($value)){
+			$_config[$name] = $value;
+			return;
 		}
-	}
-	$_config[$name] = $value;
+		if(isset($_config[$name]))return $_config[$name];
+		if(!strpos($name,'_'))return null;
+		$tag = explode('_',$name);
+	    if(EACS && !is_null(eaccelerator_get($name))){
+			$_config = array_merge($_config,eaccelerator_get($tag[0]));
+			return $_config[$name];
+		}
+		// Source文件名
+		if(($file = ucwords($tag[0])) && file_exists(DEVE_PATH."/Source/{$file}.php")){
+			$c = array_change_key_case(include(DEVE_PATH."/Source/{$file}.php"));
+			if(file_exists(CONFIG_PATH."/{$file}.php")){
+				$c = array_merge($c,array_change_key_case(include(CONFIG_PATH."/{$file}.php")));
+			}
+			$_config = array_merge($_config,$c);
+		    EACS && eaccelerator_put($tag[0],$c,600);
+		}	
+		// 返回配置
+		return isset($_config[$name])?$_config[$name]:null;
+	}	
+	if(is_array($name))
+        return $_config = array_merge($_config,array_change_key_case($name));
 	return;
 }
 
