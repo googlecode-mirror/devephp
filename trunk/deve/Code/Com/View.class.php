@@ -167,7 +167,7 @@ class View extends Deve
 		if(null===$templateFile)
 			// 使用null参数作为模版名直接返回不做任何输出
 			return ;
-		if(empty($charset))  $charset = S('TMPL_CHARSET');
+		if(empty($charset))  $charset = S('APP_TMPL_CHARSET');
 		// 网页字符编码
 		header("Content-Type:".$contentType."; charset=".$charset);
 		header("Cache-control: private");  //支持页面回跳
@@ -179,7 +179,7 @@ class View extends Deve
 			// 自动定位模板文件
 			$templateFile   = $this->parseTemplateFile($templateFile);
 
-		$engine  = strtolower(S('TMPL_ENGINE_TYPE'));
+		$engine  = strtolower(S('APP_TMPL_ENGINE'));
 		if('php'==$engine) {
 			// 模板阵列变量分解成为独立变量
 			extract($this->tVar, EXTR_OVERWRITE);
@@ -189,7 +189,7 @@ class View extends Deve
 			// 如果是Think模板引擎并且缓存有效 分解变量并载入模板缓存
 			extract($this->tVar, EXTR_OVERWRITE);
 			// 载入模版缓存文件		 
-			include S('CACHE_PATH').md5($templateFile).S('TMPL_CACHFILE_SUFFIX');
+			include S('APP_TMPL_CACHE_PATH').md5($templateFile).S('APP_TMPL_CACHE_SUFFIX');
 		}else{
 			// 模板文件需要重新编译 支持第三方模板引擎
 			// 调用模板引擎解析和输出
@@ -281,9 +281,9 @@ class View extends Deve
      +----------------------------------------------------------
      */
 	protected function output($content,$display) {
-		if(S('HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
+		if(S('APP_HTML_CACHE_ON'))  HtmlCache::writeHTMLCache($content);
 		if($display) {
-			if(S('APP_RUN_TIME')){
+			if(S('APP_SHOW_RUN_TIME')){
 				$runtime = '<div  id="think_run_time" class="think_run_time">'.$this->showTime().'</div>';
 				if(strpos($content,'{__RUNTIME__}'))
 					$content   =  str_replace('{__RUNTIME__}',$runtime,$content);
@@ -321,7 +321,7 @@ class View extends Deve
 			'__SELF__'    => __SELF__,       // 当前页面地址
 		    '__CURRENT__' => __CURRENT__,
 		);
-		if(S('TOKEN_ON')) {
+		if(S('APP_TOKEN_ON')) {
 			if(strpos($content,'{__TOKEN__}')) {
 				// 指定表单令牌隐藏域位置
 				$replace['{__TOKEN__}'] =  $this->buildFormToken();
@@ -334,8 +334,8 @@ class View extends Deve
 			}
 		}
 		// 允许用户自定义模板的字符串替换
-		if(is_array(S('TMPL_PARSE_STRING')) )
-			$replace =  array_merge($replace,S('TMPL_PARSE_STRING'));
+		if(is_array(S('APP_TMPL_PARSE_STRING')) )
+			$replace =  array_merge($replace,S('APP_TMPL_PARSE_STRING'));
 		$content = str_replace(array_keys($replace),array_values($replace),$content);
 		return $content;
 	}
@@ -449,7 +449,7 @@ class View extends Deve
 //		$_C='<pre>'.var_export(S(),true).'</pre>';
 
 		$this->trace('当前页面',    $_SERVER['REQUEST_URI']);
-		$this->trace('模板缓存',    S('CACHE_PATH').md5($this->templateFile).S('TMPL_CACHFILE_SUFFIX'));
+		$this->trace('模板缓存',    S('APP_TMPL_CACHE_PATH').md5($this->templateFile).S('APP_TMPL_CACHE_SUFFIX'));
 		$this->trace('请求方法',    $_SERVER['REQUEST_METHOD']);
 		$this->trace('通信协议',    $_SERVER['SERVER_PROTOCOL']);
 		$this->trace('请求时间',    date('Y-m-d H:i:s',$_SERVER['REQUEST_TIME']));
@@ -462,7 +462,7 @@ class View extends Deve
 		$this->trace('加载文件',    count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)));
 		$_trace =   array_merge($_trace,$this->trace);
 		// 调用Trace页面模板
-		include S('TMPL_TRACE_FILE');
+		include S('APP_TRACE_FILE');
 	}
 
 }//

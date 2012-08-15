@@ -850,10 +850,10 @@ function F($name,$value='',$path=DATA_PATH) {
 		{
 			// 默认设置
 			$config = array(
-				'prefix' => S('COOKIE_PREFIX'), // cookie 名称前缀
-				'expire' => S('COOKIE_EXPIRE'), // cookie 保存时间
-				'path'   => S('COOKIE_PATH'),   // cookie 保存路径
-				'domain' => S('COOKIE_DOMAIN'), // cookie 有效域名
+				'prefix' => S('APP_COOKIE_PREFIX'), // cookie 名称前缀
+				'expire' => S('APP_COOKIE_EXPIRE'), // cookie 保存时间
+				'path'   => S('APP_COOKIE_PATH'),   // cookie 保存路径
+				'domain' => S('APP_COOKIE_DOMAIN'), // cookie 有效域名
 			);
 			// 参数设置(会覆盖黙认设置)
 			if (!empty($option)) {
@@ -881,7 +881,11 @@ function F($name,$value='',$path=DATA_PATH) {
 			}
 			$name = $config['prefix'].$name;
 			if (''===$value){
-				return isset($_COOKIE[$name]) ? (MAGIC_QUOTES_GPC===true ? unserialize(stripslashes($_COOKIE[$name])) : unserialize($_COOKIE[$name])) : null;// 获取指定Cookie
+				if(isset($_COOKIE[$name])){
+				    return unserialize(MAGIC_QUOTES_GPC===true?stripslashes($_COOKIE[$name]):$_COOKIE[$name]);
+				}else{
+					return null;
+				}	
 			}else {
 				if (is_null($value)) {
 					setcookie($name,'',time()-3600,$config['path'],$config['domain']);

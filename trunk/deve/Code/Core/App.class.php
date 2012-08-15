@@ -54,7 +54,7 @@ class App
 
 		// 设置系统时区 PHP5支持
 		if(function_exists('date_default_timezone_set'))
-			date_default_timezone_set(S('APP_DEFAULT_TIMEZONE'));
+			date_default_timezone_set(S('APP_TIMEZONE'));
 
 		// 允许注册AUTOLOAD方法
 		if(S('APP_AUTOLOAD_ON') && function_exists('spl_autoload_register'))
@@ -81,7 +81,7 @@ class App
 		App::checkLanguage();         // 语言检查
 		App::checkTemplate();         // 模板检查
 		// 开启静态缓存
-		if(S('APP_HTMLCACHE_ON')){        
+		if(S('APP_HTML_CACHE_ON')){        
 			HtmlCache::readHTMLCache();
 		}
 		// 项目初始化标签
@@ -270,9 +270,9 @@ class App
 		}
 		// 启用了语言包功能
 		// 根据是否启用自动侦测设置获取语言选择
-		if (S('LANG_AUTO_DETECT')){
-			if(isset($_GET[S('LANG_VAR')])){// 检测浏览器支持语言
-				$langSet = $_GET[S('LANG_VAR')];// url中设置了语言变量
+		if (S('APP_LANG_AUTO')){
+			if(isset($_GET[S('APP_VAR_LANG')])){// 检测浏览器支持语言
+				$langSet = $_GET[S('APP_VAR_LANG')];// url中设置了语言变量
 				cookie('deve_lang',$langSet,3600);
 			}elseif(cookie('deve_lang'))// 获取上次用户的选择
 				$langSet = cookie('deve_lang');
@@ -307,7 +307,7 @@ class App
      */
 	static private function checkTemplate()
 	{
-		if(S('TMPL_DETECT_THEME')) {// 自动侦测模板主题
+		if(S('APP_THEME_AUTO')) {// 自动侦测模板主题
 			$t = S('APP_VAR_TEMPLATE');
 			if (isset($_GET[$t])){
 				$templateSet = $_GET[$t];
@@ -316,15 +316,15 @@ class App
 				if(cookie('deve_template')){
 					$templateSet = cookie('deve_template');
 				}else{
-					$templateSet =    S('TMPL_DEFAULT_THEME');
+					$templateSet =    S('APP_DEFAULT_THEME');
 					cookie('deve_template',$templateSet,3600);
 				}
 			}
 			if(!is_dir(VIEW_PATH.'/'.$templateSet))
 				//模版不存在的话，使用默认模版
-				$templateSet =    S('TMPL_DEFAULT_THEME');
+				$templateSet =    S('APP_DEFAULT_THEME');
 		}else{
-			$templateSet =    S('TMPL_DEFAULT_THEME');
+			$templateSet =    S('APP_DEFAULT_THEME');
 		}
 		//	S('TMPL_TEMPLATE_SUFFIX','.html');
 
@@ -351,7 +351,7 @@ class App
 		{
 			define('__URL__',PHP_FILE.'?'.S('APP_VAR_MODULE').'='.$module);
 			S('TMPL_FILE_NAME',TEMPLATE_PATH.'/'.MODULE_NAME.CONTROL_NAME.S('TMPL_TEMPLATE_SUFFIX'));
-			S('CACHE_PATH',CACHE_PATH.'/');
+			S('APP_CACHE_PATH',CACHE_PATH.'/');
 		}
 		//当前操作地址
 		define('__ACTION__',__URL__.S('URL_PATHINFO_DEPR').ACTION_NAME);
@@ -437,10 +437,10 @@ class App
 	static public function run() {
 		App::init();
 		// 记录应用初始化时间
-		if(S('SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
+		if(S('APP_SHOW_RUN_TIME'))  $GLOBALS['_initTime'] = microtime(TRUE);
 		App::exec();
 		// 保存日志记录
-		if(S('LOG_RECORD')) Log::save();
+		if(S('APP_LOG_RECORD')) Log::save();
 		return ;
 	}
 
