@@ -43,7 +43,7 @@ class App
 			(!is_file(CONFIG_PATH.'/App.php') || filemtime(APP_PATH.'/~app.php')>filemtime(CONFIG_PATH.'/App.php')))
 		{
 			// 直接读取编译后的项目文件
-			include APP_PATH.'/~app.php';
+			S(include APP_PATH.'/~app.php');
 		}else{
 			// 预编译项目
 			App::build();
@@ -102,7 +102,7 @@ class App
 	{
 		$common   = '';
 		// 是否为开发模式
-		$runtime = IS_DEBUG == false;
+		$runtime = S('APP_DEBUG')==false;
 		// 加载项目公共文件
 		if(is_file(LIB_PATH.'/Common.php')) {
 			include LIB_PATH.'/Common.php';
@@ -125,7 +125,7 @@ class App
 		}
 		// 开发模式下不编译项目文件
 		if($runtime){
-			$content  = "<?php ".$common."\n?>";
+			$content  = "<?php ".$common."\n return ".var_export(S(),true).";\n?>";
 			file_put_contents(APP_PATH.'/~app.php',strip_whitespace($content));
 		}
 		return ;
