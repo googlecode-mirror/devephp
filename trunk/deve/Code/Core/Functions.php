@@ -139,21 +139,21 @@ function halt($error) {
 			$e = $error;
 		}
 		// 包含异常页面模板
-		include S('TMPL_EXCEPTION_FILE');
+		include S('APP_TMPL_EXCEPTION_FILE');
 	}
 	else
 	{
 		//否则定向到错误页面
-		$error_page =   S('ERROR_PAGE');
+		$error_page =   S('APP_SHOW_ERROR_PAGE');
 		if(!empty($error_page)){
 			redirect($error_page);
 		}else {
-			if(S('SHOW_ERROR_MSG'))
+			if(S('APP_SHOW_ERROR_MSG'))
 				$e['message'] =  is_array($error)?$error['message']:$error;
 			else
-				$e['message'] = S('ERROR_MESSAGE');
+				$e['message'] = S('APP_SHOW_ERROR_MESSAGE');
 			// 包含异常页面模板
-			include S('TMPL_EXCEPTION_FILE');
+			include S('APP_TMPL_EXCEPTION_FILE');
 		}
 	}
 	exit;
@@ -316,7 +316,7 @@ function require_cache($filename)
 // 区分大小写的文件存在判断
 function file_exists_case($filename) {
 	if(is_file($filename)) {
-		if(IS_WIN && S('APP_FILE_CASE')) {
+		if(IS_WIN && S('APP_FILE_CASE_INSENSITIVE')) {
 			if(basename(realpath($filename)) != basename($filename))
 				return false;
 		}
@@ -848,14 +848,15 @@ function F($name,$value='',$path=DATA_PATH) {
 
 		function cookie($name,$value='',$option=null)
 		{
+			static $config = null;
 			// 默认设置
-			$config = array(
+		    is_null($config) && $config = array(
 				'prefix' => S('APP_COOKIE_PREFIX'), // cookie 名称前缀
 				'expire' => S('APP_COOKIE_EXPIRE'), // cookie 保存时间
 				'path'   => S('APP_COOKIE_PATH'),   // cookie 保存路径
 				'domain' => S('APP_COOKIE_DOMAIN'), // cookie 有效域名
-			);
-			// 参数设置(会覆盖黙认设置)
+            );
+		    // 参数设置(会覆盖黙认设置)
 			if (!empty($option)) {
 				if (is_numeric($option))
 					$option = array('expire'=>$option);
