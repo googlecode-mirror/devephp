@@ -61,17 +61,17 @@ class  ThinkTemplate extends Deve
      */
     public function __construct(){
 
-        $this->config['cache_path']        =  S('CACHE_PATH');
-        $this->config['template_suffix']   =  S('TMPL_TEMPLATE_SUFFIX');
-        $this->config['cache_suffix']       =  S('TMPL_CACHFILE_SUFFIX');
-        $this->config['tmpl_cache']        =  S('TMPL_CACHE_ON');
-        $this->config['cache_time']        =  S('TMPL_CACHE_TIME');
-        $this->config['taglib_begin']        =  $this->stripPreg(S('TAGLIB_BEGIN'));
-        $this->config['taglib_end']          =  $this->stripPreg(S('TAGLIB_END'));
-        $this->config['tmpl_begin']         =  $this->stripPreg(S('TMPL_L_DELIM'));
-        $this->config['tmpl_end']           =  $this->stripPreg(S('TMPL_R_DELIM'));
-        $this->config['default_tmpl']       =  S('TMPL_FILE_NAME');
-        $this->config['tag_level']            =  S('TAG_NESTED_LEVEL');
+        $this->config['cache_path']        =  S('APP_TMPL_CACHE_PATH');
+        $this->config['template_suffix']   =  S('APP_TMPL_FILE_SUFFIX');
+        $this->config['cache_suffix']      =  S('APP_TMPL_CACHE_SUFFIX');
+        $this->config['tmpl_cache']        =  S('APP_TMPL_CACHE_ON');
+        $this->config['cache_time']        =  S('APP_TMPL_CACHE_TIME');
+        $this->config['taglib_begin']      =  $this->stripPreg(S('TAGLIB_BEGIN'));
+        $this->config['taglib_end']        =  $this->stripPreg(S('TAGLIB_END'));
+        $this->config['tmpl_begin']        =  $this->stripPreg(S('TMPL_L_DELIM'));
+        $this->config['tmpl_end']          =  $this->stripPreg(S('TMPL_R_DELIM'));
+        $this->config['default_tmpl']      =  S('APP_TMPL_FILE_NAME');
+        $this->config['tag_level']         =  S('TAG_NESTED_LEVEL');
     }
 
     private function stripPreg($str) {
@@ -730,7 +730,7 @@ class  ThinkTemplate extends Deve
                     $parseStr = 'THINK_VERSION';
                     break;
                 case 'TEMPLATE':
-                    $parseStr = 'S("TMPL_FILE_NAME")';
+                    $parseStr = 'S("APP_TMPL_FILE_NAME")';
                     break;
                 case 'LDELIM':
                     $parseStr = 'S("TMPL_L_DELIM")';

@@ -224,15 +224,15 @@ class View extends Deve
      */
 	protected function checkCache($tmplTemplateFile)
 	{
-		if (!S('TMPL_CACHE_ON')) // 优先对配置设定检测
+		if (!S('APP_TMPL_CACHE_ON')) // 优先对配置设定检测
 			return false;
-		$tmplCacheFile = S('CACHE_PATH').md5($tmplTemplateFile).S('TMPL_CACHFILE_SUFFIX');
+		$tmplCacheFile = S('APP_TMPL_CACHE_PATH').md5($tmplTemplateFile).S('APP_TMPL_CACHE_SUFFIX');
 		if(!is_file($tmplCacheFile)){
 			return false;
 		}elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
 			// 模板文件如果有更新则缓存需要更新
 			return false;
-		}elseif (S('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+S('TMPL_CACHE_TIME')) {
+		}elseif (S('APP_TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+S('APP_TMPL_CACHE_TIME')) {
 			// 缓存是否在有效期
 			return false;
 		}
@@ -351,8 +351,8 @@ class View extends Deve
      */
 	private function buildFormToken() {
 		// 开启表单验证自动生成表单令牌
-		$tokenName   = S('TOKEN_NAME');
-		$tokenType = S('TOKEN_TYPE');
+		$tokenName   = S('APP_TOKEN_NAME');
+		$tokenType = S('APP_TOKEN_TYPE');
 		$tokenValue = $tokenType(microtime(TRUE));
 		$token   =  '<input type="hidden" name="'.$tokenName.'" value="'.$tokenValue.'" />';
 		$_SESSION[$tokenName]  =  $tokenValue;
@@ -375,16 +375,16 @@ class View extends Deve
 	private function parseTemplateFile($templateFile) {
 		if(''==$templateFile) {
 			// 如果模板文件名为空 按照默认规则定位
-			$templateFile = S('TMPL_FILE_NAME');
+			$templateFile = S('APP_TMPL_FILE_NAME');
 		}elseif(strpos($templateFile,'@')){
 			// 引入其它主题的操作模板 必须带上模块名称 例如 blue@User:add
-			$templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).S('TMPL_TEMPLATE_SUFFIX');
+			$templateFile   =   TMPL_PATH.str_replace(array('@',':'),'/',$templateFile).S('APP_TMPL_FILE_SUFFIX');
 		}elseif(strpos($templateFile,':')){
 			// 引入其它模块的操作模板
-			$templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).S('TMPL_TEMPLATE_SUFFIX');
+			$templateFile   =   TEMPLATE_PATH.'/'.str_replace(':','/',$templateFile).S('APP_TMPL_FILE_SUFFIX');
 		}elseif(!is_file($templateFile))    {
 			// 引入当前模块的其它操作模板
-			$templateFile =  dirname(S('TMPL_FILE_NAME')).'/'.$templateFile.S('TMPL_TEMPLATE_SUFFIX');
+			$templateFile =  dirname(S('APP_TMPL_FILE_NAME')).'/'.$templateFile.S('APP_TMPL_FILE_SUFFIX');
 		}
 		if(!file_exists_case($templateFile))
 			throw_exception(L('_TEMPLATE_NOT_EXIST_').'['.$templateFile.']');
@@ -406,7 +406,7 @@ class View extends Deve
 		$endTime = microtime(TRUE);
 		$total_run_time =   number_format(($endTime - $GLOBALS['_beginTime']), 3);
 		$showTime   =   'Process: '.$total_run_time.'s ';
-		if(S('SHOW_ADV_TIME')) {
+		if(S('APP_SHOW_ADV_TIME')) {
 			// 显示详细运行时间
 			$_load_time =   number_format(($GLOBALS['_loadTime'] -$GLOBALS['_beginTime'] ), 3);
 			$_init_time =   number_format(($GLOBALS['_initTime'] -$GLOBALS['_loadTime'] ), 3);
@@ -414,17 +414,17 @@ class View extends Deve
 			$_parse_time    =   number_format(($endTime - $startTime), 3);
 			$showTime .= '( Load:'.$_load_time.'s Init:'.$_init_time.'s Exec:'.$_exec_time.'s Template:'.$_parse_time.'s )';
 		}
-		if(S('SHOW_DB_TIMES') && class_exists('Db',false) ) {
+		if(S('APP_SHOW_DB_TIMES') && class_exists('Db',false) ) {
 			// 显示数据库操作次数
 			$db =   Db::getInstance();
 			$showTime .= ' | DB :'.$db->Q().' queries '.$db->W().' writes ';
 		}
-		if(S('SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
+		if(S('APP_SHOW_CACHE_TIMES') && class_exists('Cache',false)) {
 			// 显示缓存读写次数
 			$cache  =   Cache::getInstance();
 			$showTime .= ' | Cache :'.$cache->Q().' gets '.$cache->W().' writes ';
 		}
-		if(MEMORY_LIMIT_ON && S('SHOW_USE_MEM')) {
+		if(MEMORY_LIMIT_ON && S('APP_SHOW_USE_MEM')) {
 			// 显示内存开销
 			$startMem    =  array_sum(explode(' ', $GLOBALS['_startUseMems']));
 			$endMem     =  array_sum(explode(' ', memory_get_usage()));
@@ -462,7 +462,7 @@ class View extends Deve
 		$this->trace('加载文件',    count($files).str_replace("\n",'<br/>',substr(substr(print_r($files,true),7),0,-2)));
 		$_trace =   array_merge($_trace,$this->trace);
 		// 调用Trace页面模板
-		include S('APP_TRACE_FILE');
+		include S('APP_TMPL_TRACE_FILE');
 	}
 
 }//

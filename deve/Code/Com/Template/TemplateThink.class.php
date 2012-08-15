@@ -48,7 +48,7 @@ class TemplateThink
             // 模板阵列变量分解成为独立变量
             extract($var, EXTR_OVERWRITE);
             //载入模版缓存文件
-            include S('CACHE_PATH').md5($templateFile).S('TMPL_CACHFILE_SUFFIX');
+            include S('APP_TMPL_CACHE_PATH').md5($templateFile).S('APP_TMPL_CACHE_SUFFIX');
         }
     }
 
@@ -66,15 +66,15 @@ class TemplateThink
      */
     protected function checkCache($tmplTemplateFile)
     {
-        if (!S('TMPL_CACHE_ON')) // 优先对配置设定检测
+        if (!S('APP_TMPL_CACHE_ON')) // 优先对配置设定检测
             return false;
-        $tmplCacheFile = S('CACHE_PATH').md5($tmplTemplateFile).S('TMPL_CACHFILE_SUFFIX');
+        $tmplCacheFile = S('APP_TMPL_CACHE_PATH').md5($tmplTemplateFile).S('APP_TMPL_CACHE_SUFFIX');
         if(!is_file($tmplCacheFile))
             return false;
         elseif (filemtime($tmplTemplateFile) > filemtime($tmplCacheFile)) {
             // 模板文件如果有更新则缓存需要更新
             return false;
-        } elseif (S('TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+S('TMPL_CACHE_TIME')) {
+        } elseif (S('APP_TMPL_CACHE_TIME') != -1 && time() > filemtime($tmplCacheFile)+S('APP_TMPL_CACHE_TIME')) {
             // 缓存是否在有效期
             return false;
         }

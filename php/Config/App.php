@@ -2,7 +2,7 @@
 //项目核心文件列表
 return array(
 //'APP_DEBUG'    => true ,
-'APP_FILE_CASE'  => true,
+'APP_FILE_CASE_INSENSITIVE'  => true,
 'APP_CACHE_TYPE' => 2,
 'APP_MCA_ON'     => false,
 'APP_ROUTER_ON'  =>false,

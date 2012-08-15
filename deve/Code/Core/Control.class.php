@@ -363,21 +363,21 @@ abstract class Control extends Deve
         $this->assign('status',$status);   // 状态
         $this->assign('message',$message);// 提示信息
         //保证输出不受静态缓存影响
-        S('HTML_CACHE_ON',false);
+        S('APP_HTML_CACHE_ON',false);
         if($status) { //发送成功信息
             // 成功操作后默认停留1秒
             if(!$this->get('waitSecond'))    $this->assign('waitSecond',"1");
             // 默认操作成功自动返回操作前页面
             if(!$this->get('jumpUrl')) $this->assign("jumpUrl",$_SERVER["HTTP_REFERER"]);
-            $this->display(S('TMPL_ACTION_SUCCESS'));
+            $this->display(S('APP_TMPL_ACTION_SUCCESS'));
         }else{
             // 发生错误时候默认停留3秒
             if(!$this->get('waitSecond'))    $this->assign('waitSecond',"3");
             // 默认发生错误的话自动返回上页
             if(!$this->get('jumpUrl')) $this->assign('jumpUrl',"javascript:history.back(-1);");
-            $this->display(S('TMPL_ACTION_ERROR'));
+            $this->display(S('APP_TMPL_ACTION_ERROR'));
         }
-        if(S('LOG_RECORD')) Log::save();
+        if(S('APP_LOG_RECORD')) Log::save();
         // 中止执行  避免出错后继续执行
         exit ;
     }
