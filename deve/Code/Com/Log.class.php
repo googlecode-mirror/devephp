@@ -62,7 +62,7 @@ class Log extends Deve
      +----------------------------------------------------------
      */
 	static function record($message,$level=self::ERR,$record=false) {
-		if($record || in_array($level,S('LOG_RECORD_LEVEL'))) {
+		if($record || in_array($level,S('APP_LOG_LEVEL'))) {
 			$now = date(self::$format);
 			self::$log[] =   "{$now} {$level}: {$message}\r\n";
 		}
@@ -88,7 +88,7 @@ class Log extends Deve
 			$destination = LOGS_PATH.'/'.date('y_m_d').".log";
 		if(self::FILE == $type) { // 文件方式记录日志信息
 			//检测日志文件大小，超过配置大小则备份日志文件重新生成
-			if(is_file($destination) && floor(S('LOG_FILE_SIZE')) <= filesize($destination) )
+			if(is_file($destination) && floor(S('APP_LOG_FILE_SIZE')) <= filesize($destination) )
 				rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
 		}
 		error_log(implode("",self::$log), $type,$destination ,$extra);
@@ -120,7 +120,7 @@ class Log extends Deve
 			$destination = LOGS_PATH.'/'.date('y_m_d').".log";
 		if(self::FILE == $type) { // 文件方式记录日志
 			//检测日志文件大小，超过配置大小则备份日志文件重新生成
-			if(is_file($destination) && floor(S('LOG_FILE_SIZE')) <= filesize($destination) )
+			if(is_file($destination) && floor(S('APP_LOG_FILE_SIZE')) <= filesize($destination) )
 				rename($destination,dirname($destination).'/'.time().'-'.basename($destination));
 		}
 		error_log("{$now} {$level}: {$message}\r\n", $type,$destination,$extra );
