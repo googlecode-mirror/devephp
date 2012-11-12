@@ -11,6 +11,7 @@
 
 //定义项目名称和路径
 //error_reporting(0);
+
 define('APP_NAME', 'DEVE-TEST');
 define('APP_PATH', realpath(dirname(__FILE__)));
 // 是否为开发模式
