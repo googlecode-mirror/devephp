@@ -15,7 +15,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('PS', PATH_SEPARATOR);
 define('BP', dirname(dirname(__FILE__)));
 define('DEVE_PATH', BP . DS . 'deve');
-define('APP_PATH', BP . DS . 'php');
+define('APP_PATH', BP . DS . 'app');
 
 defined('APPLICATION_ENV')
 	|| define('APPLICATION_ENV', (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV') : 'development'));
@@ -28,12 +28,12 @@ if('development' == APPLICATION_ENV){
 
 $paths[] = DEVE_PATH . DS . 'Source' . DS . 'Libs';
 $paths[] = APP_PATH . DS . 'Libs';
-echo PHP_SAPI."\n";
-set_include_path(implode(PS, $paths) . PS . get_include_path());
-echo "success";
-//include DEVE_PATH . '/Source/Libs/Zend/Loader.php';
-//include DEVE_PATH . '/Source/Libs/Zend/Loader/Autoloader.php';
 
-//$appliaction = new Zend_Appliaction(APPLICATION_ENV, APP_PATH . DS . 'Config/config.ini');
+set_include_path(implode(PS, $paths) . PS . get_include_path());
+
+include DEVE_PATH . '/Source/Libs/Zend/Loader.php';
+include DEVE_PATH . '/Source/Libs/Zend/Loader/Autoloader.php';
+
+$appliaction = new Zend_Application(APPLICATION_ENV, APP_PATH . DS . 'Config/config.ini');
 
 
